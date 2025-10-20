@@ -1,0 +1,35 @@
+<div class="box">
+  <div class="register">
+    <form #registerForm="ngForm" (ngSubmit)="submitRegister(registerForm)" class="register__formulario">
+      <h2>Registrate</h2>
+      
+      <div class="register__formulario-campo">
+        <label for="email">Email</label>
+        <input type="email" id="email" name="email" placeholder="Ingresa tu email" ngModel required>
+      </div>
+      <div class="register__formulario-campo">
+        <label for="password">Contraseña</label>
+        <input type="password" id="password" name="password" placeholder="Ingresa una contraseña valida" ngModel required>
+      </div>
+
+     
+      <div class="register__formulario-terminos">
+        <input type="checkbox" id="terminos" name="terminos" ngModel required> 
+        <label for="terminos" class="terminos-label"> 
+          Acepto terminos y condiciones
+        </label>
+      </div>
+
+      <button type="submit" 
+              [disabled]="registerForm.invalid" 
+              [class.register__formulario-boton]="registerForm.valid" 
+              [class.register__formulario-boton--invalido]="registerForm.invalid">
+        REGISTRAR
+      </button>
+      
+      <button type="button" class="register__formulario-boton--volver" (click)="navigate('/login')"> 
+        VOLVER
+      </button>
+    </form>
+  </div>
+</div>

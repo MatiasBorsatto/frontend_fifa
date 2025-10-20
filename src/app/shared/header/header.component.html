@@ -1,0 +1,9 @@
+<header class="header">
+    <div *ngIf="!isLogged()">
+        <button (click)="navigate('/login')">INICIAR SESION</button>
+    </div>
+    <div *ngIf="isLogged()">
+        <button (click)="cerrarSesion()">CERRAR SESION</button>
+    </div>
+
+</header>

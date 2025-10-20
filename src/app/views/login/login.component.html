@@ -1,0 +1,31 @@
+<div class="box">
+  <div class="login">
+    <form #loginForm="ngForm" (ngSubmit)="submitLogin(loginForm)" class="login__formulario">
+      <h2>Inicia sesión</h2>
+
+      <div class="login__formulario-campo">
+        <label for="email">Email</label>
+        <input type="email" id="email" name="email" placeholder="Ingresa tu email" ngModel required>
+      </div>
+
+      <div class="login__formulario-campo">
+        <label for="password">Contraseña</label>
+        <input type="password" id="password" name="password" placeholder="Ingresa tu contraseña" ngModel required>
+      </div>
+
+      <button 
+        type="submit" 
+        [disabled]="loginForm.invalid"
+        [class.login__formulario-boton]="loginForm.valid"
+        [class.login__formulario-boton--invalido]="loginForm.invalid">
+        INGRESAR
+      </button>
+
+      <p 
+        (click)="navigate('/register')"
+        style="cursor: pointer; font-size: smaller; color: rgb(73, 73, 73); text-decoration: underline; margin-top: 1rem;">
+        ¿No tienes cuenta? Registrate
+      </p>
+    </form>
+  </div>
+</div>
