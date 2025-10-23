@@ -1,0 +1,317 @@
+<div class="crear-container">
+  <div class="crear-card">
+    <!-- Header -->
+    <div class="header">
+      <div class="header-info">
+        <h1>➕ Crear Nuevo Jugador</h1>
+        <p>Completa el formulario para agregar un nuevo jugador a la base de datos</p>
+      </div>
+      <button class="btn-cancel" (click)="cancelar()">✖️ Cancelar</button>
+    </div>
+
+    <!-- Botón de autocompletar -->
+    <div class="quick-fill">
+      <button type="button" class="btn-quick" (click)="autocompletarMisDatos()">
+        ⚡ Autocompletar con Datos de Ejemplo
+      </button>
+    </div>
+
+    <!-- Formulario -->
+    <form [formGroup]="jugadorForm" (ngSubmit)="onSubmit()">
+      <!-- Error Message -->
+      <div class="error-message" *ngIf="errorMessage">
+        {{ errorMessage }}
+      </div>
+
+      <!-- Información Básica -->
+      <div class="form-section">
+        <h2>📝 Información Básica</h2>
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Nombre Completo *</label>
+            <input 
+              type="text" 
+              formControlName="long_name"
+              [class.error]="isFieldInvalid('long_name')"
+              placeholder="Ej: Lionel Messi">
+            <small class="error-text" *ngIf="isFieldInvalid('long_name')">
+              {{ getErrorMessage('long_name') }}
+            </small>
+          </div>
+
+          <div class="form-group">
+            <label>Edad *</label>
+            <input 
+              type="number" 
+              formControlName="age"
+              [class.error]="isFieldInvalid('age')"
+              placeholder="25">
+            <small class="error-text" *ngIf="isFieldInvalid('age')">
+              {{ getErrorMessage('age') }}
+            </small>
+          </div>
+
+          <div class="form-group">
+            <label>Posición *</label>
+            <select 
+              formControlName="player_positions"
+              [class.error]="isFieldInvalid('player_positions')">
+              <option value="">Seleccionar posición</option>
+              <option *ngFor="let pos of posicionesDisponibles" [value]="pos">{{ pos }}</option>
+            </select>
+            <small class="error-text" *ngIf="isFieldInvalid('player_positions')">
+              {{ getErrorMessage('player_positions') }}
+            </small>
+          </div>
+
+          <div class="form-group">
+            <label>Club *</label>
+            <input 
+              type="text" 
+              formControlName="club_name"
+              [class.error]="isFieldInvalid('club_name')"
+              placeholder="Ej: FC Barcelona">
+            <small class="error-text" *ngIf="isFieldInvalid('club_name')">
+              {{ getErrorMessage('club_name') }}
+            </small>
+          </div>
+
+          <div class="form-group">
+            <label>Nacionalidad *</label>
+            <input 
+              type="text" 
+              formControlName="nationality_name"
+              [class.error]="isFieldInvalid('nationality_name')"
+              placeholder="Ej: Argentina">
+            <small class="error-text" *ngIf="isFieldInvalid('nationality_name')">
+              {{ getErrorMessage('nationality_name') }}
+            </small>
+          </div>
+
+          <div class="form-group">
+            <label>Pie Preferido *</label>
+            <select 
+              formControlName="preferred_foot"
+              [class.error]="isFieldInvalid('preferred_foot')">
+              <option *ngFor="let pie of pieOptions" [value]="pie">{{ pie }}</option>
+            </select>
+            <small class="error-text" *ngIf="isFieldInvalid('preferred_foot')">
+              {{ getErrorMessage('preferred_foot') }}
+            </small>
+          </div>
+        </div>
+      </div>
+
+      <!-- Calificaciones -->
+      <div class="form-section">
+        <h2>⭐ Calificaciones</h2>
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Overall *</label>
+            <input 
+              type="number" 
+              formControlName="overall"
+              [class.error]="isFieldInvalid('overall')"
+              placeholder="85"
+              min="40" max="99">
+            <input 
+              type="range" 
+              formControlName="overall"
+              min="40" max="99" 
+              class="range-slider">
+            <span class="range-value">{{ jugadorForm.get('overall')?.value }}</span>
+            <small class="error-text" *ngIf="isFieldInvalid('overall')">
+              {{ getErrorMessage('overall') }}
+            </small>
+          </div>
+
+          <div class="form-group">
+            <label>Potencial *</label>
+            <input 
+              type="number" 
+              formControlName="potential"
+              [class.error]="isFieldInvalid('potential')"
+              placeholder="90"
+              min="40" max="99">
+            <input 
+              type="range" 
+              formControlName="potential"
+              min="40" max="99" 
+              class="range-slider">
+            <span class="range-value">{{ jugadorForm.get('potential')?.value }}</span>
+            <small class="error-text" *ngIf="isFieldInvalid('potential')">
+              {{ getErrorMessage('potential') }}
+            </small>
+          </div>
+
+          <div class="form-group">
+            <label>Altura (cm)</label>
+            <input 
+              type="number" 
+              formControlName="height_cm"
+              placeholder="175"
+              min="150" max="220">
+          </div>
+
+          <div class="form-group">
+            <label>Peso (kg)</label>
+            <input 
+              type="number" 
+              formControlName="weight_kg"
+              placeholder="70"
+              min="50" max="120">
+          </div>
+        </div>
+      </div>
+
+      <!-- Habilidades Principales -->
+      <div class="form-section">
+        <h2>⚡ Habilidades Principales</h2>
+        <p class="section-description">Ajusta los valores de las habilidades principales (0-99)</p>
+        <div class="form-grid skills-grid">
+          <div class="form-group">
+            <label>🏃 Velocidad (Pace)</label>
+            <div class="skill-input">
+              <input 
+                type="number" 
+                formControlName="pace"
+                min="0" max="99">
+              <input 
+                type="range" 
+                formControlName="pace"
+                min="0" max="99" 
+                class="range-slider">
+              <span class="range-value">{{ jugadorForm.get('pace')?.value }}</span>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>⚽ Tiro (Shooting)</label>
+            <div class="skill-input">
+              <input 
+                type="number" 
+                formControlName="shooting"
+                min="0" max="99">
+              <input 
+                type="range" 
+                formControlName="shooting"
+                min="0" max="99" 
+                class="range-slider">
+              <span class="range-value">{{ jugadorForm.get('shooting')?.value }}</span>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>🎯 Pase (Passing)</label>
+            <div class="skill-input">
+              <input 
+                type="number" 
+                formControlName="passing"
+                min="0" max="99">
+              <input 
+                type="range" 
+                formControlName="passing"
+                min="0" max="99" 
+                class="range-slider">
+              <span class="range-value">{{ jugadorForm.get('passing')?.value }}</span>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>🎨 Regate (Dribbling)</label>
+            <div class="skill-input">
+              <input 
+                type="number" 
+                formControlName="dribbling"
+                min="0" max="99">
+              <input 
+                type="range" 
+                formControlName="dribbling"
+                min="0" max="99" 
+                class="range-slider">
+              <span class="range-value">{{ jugadorForm.get('dribbling')?.value }}</span>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>🛡️ Defensa (Defending)</label>
+            <div class="skill-input">
+              <input 
+                type="number" 
+                formControlName="defending"
+                min="0" max="99">
+              <input 
+                type="range" 
+                formControlName="defending"
+                min="0" max="99" 
+                class="range-slider">
+              <span class="range-value">{{ jugadorForm.get('defending')?.value }}</span>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>💪 Físico (Physical)</label>
+            <div class="skill-input">
+              <input 
+                type="number" 
+                formControlName="physic"
+                min="0" max="99">
+              <input 
+                type="range" 
+                formControlName="physic"
+                min="0" max="99" 
+                class="range-slider">
+              <span class="range-value">{{ jugadorForm.get('physic')?.value }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Estadísticas Detalladas -->
+      <div class="form-section">
+        <h2>📊 Estadísticas Detalladas (Opcional)</h2>
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Centros</label>
+            <input type="number" formControlName="attacking_crossing" min="0" max="99">
+          </div>
+
+          <div class="form-group">
+            <label>Finalización</label>
+            <input type="number" formControlName="attacking_finishing" min="0" max="99">
+          </div>
+
+          <div class="form-group">
+            <label>Regate Habilidad</label>
+            <input type="number" formControlName="skill_dribbling" min="0" max="99">
+          </div>
+
+          <div class="form-group">
+            <label>Aceleración</label>
+            <input type="number" formControlName="movement_acceleration" min="0" max="99">
+          </div>
+
+          <div class="form-group">
+            <label>Potencia de Tiro</label>
+            <input type="number" formControlName="power_shot_power" min="0" max="99">
+          </div>
+
+          <div class="form-group">
+            <label>Agresividad</label>
+            <input type="number" formControlName="mentality_aggression" min="0" max="99">
+          </div>
+        </div>
+      </div>
+
+      <!-- Botones -->
+      <div class="form-actions">
+        <button type="button" class="btn-secondary" (click)="cancelar()" [disabled]="loading">
+          Cancelar
+        </button>
+        <button type="submit" class="btn-primary" [disabled]="jugadorForm.invalid || loading">
+          {{ loading ? 'Creando...' : '✅ Crear Jugador' }}
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

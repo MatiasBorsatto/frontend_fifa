@@ -1,0 +1,306 @@
+<div class="detalle-container">
+  <!-- Loading -->
+  <div *ngIf="loading" class="loading">
+    <div class="spinner"></div>
+    <p>Cargando jugador...</p>
+  </div>
+
+  <!-- Contenido del jugador -->
+  <div *ngIf="!loading && jugador" class="detalle-content">
+    <!-- Header con info básica -->
+    <div class="header-card">
+      <button class="btn-back" (click)="volver()">
+        ← Volver
+      </button>
+
+      <div class="player-header">
+        <div class="player-photo">
+          <img
+            [src]="'http://localhost:3000/api/proxy-image?url=' + jugador.player_face_url"
+            alt="Jugador"
+            (error)="onImageError($event)"
+            loading="lazy"
+          />
+        </div>
+
+        <div class="player-info">
+          <h1>{{ jugador.long_name }}</h1>
+          <div class="player-meta">
+            <span class="badge badge-position">{{ jugador.player_positions }}</span>
+            <span class="badge badge-age">{{ jugador.age }} años</span>
+            <span class="badge badge-foot">{{ jugador.preferred_foot }}</span>
+          </div>
+          <div class="player-club">
+            <strong>🏆 Club:</strong> {{ jugador.club_name }}
+          </div>
+          <div class="player-nation">
+            <strong>🌍 Nacionalidad:</strong> {{ jugador.nationality_name }}
+          </div>
+        </div>
+
+        <div class="player-ratings">
+          <div class="rating-box overall" [style.background]="getOverallColor(jugador.overall)">
+            <div class="rating-label">OVERALL</div>
+            <div class="rating-value">{{ jugador.overall }}</div>
+          </div>
+          <div class="rating-box potential">
+            <div class="rating-label">POTENCIAL</div>
+            <div class="rating-value">{{ jugador.potential }}</div>
+            <div class="rating-diff" *ngIf="getPotentialDifference() > 0">
+              +{{ getPotentialDifference() }}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <button class="btn-edit" (click)="editar()">
+        ✏️ Editar Jugador
+      </button>
+    </div>
+
+    <!-- Estadísticas físicas -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-icon">📏</div>
+        <div class="stat-info">
+          <div class="stat-label">Altura</div>
+          <div class="stat-value">{{ jugador.height_cm }} cm</div>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon">⚖️</div>
+        <div class="stat-info">
+          <div class="stat-label">Peso</div>
+          <div class="stat-value">{{ jugador.weight_kg }} kg</div>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon">⭐</div>
+        <div class="stat-info">
+          <div class="stat-label">Pie Débil</div>
+          <div class="stat-value">{{ jugador.weak_foot }}/5</div>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon">🎯</div>
+        <div class="stat-info">
+          <div class="stat-label">Regates</div>
+          <div class="stat-value">{{ jugador.skill_moves }}/5</div>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon">💼</div>
+        <div class="stat-info">
+          <div class="stat-label">Ritmo Trabajo</div>
+          <div class="stat-value">{{ jugador.work_rate || 'N/A' }}</div>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon">👤</div>
+        <div class="stat-info">
+          <div class="stat-label">Tipo Cuerpo</div>
+          <div class="stat-value">{{ jugador.body_type || 'Normal' }}</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Gráficos -->
+    <div class="chart-card">
+  <h2>⚡ Habilidades Principales</h2>
+  <div class="chart-wrapper">
+    <canvas #radarCanvas></canvas>
+  </div>
+  <div class="skills-legend">
+          <div class="skill-item">
+            <span class="skill-label">Velocidad:</span>
+            <span class="skill-value">{{ jugador.pace }}</span>
+            <div class="skill-bar">
+              <div class="skill-fill" [style.width.%]="jugador.pace"></div>
+            </div>
+          </div>
+          <div class="skill-item">
+            <span class="skill-label">Tiro:</span>
+            <span class="skill-value">{{ jugador.shooting }}</span>
+            <div class="skill-bar">
+              <div class="skill-fill" [style.width.%]="jugador.shooting"></div>
+            </div>
+          </div>
+          <div class="skill-item">
+            <span class="skill-label">Pase:</span>
+            <span class="skill-value">{{ jugador.passing }}</span>
+            <div class="skill-bar">
+              <div class="skill-fill" [style.width.%]="jugador.passing"></div>
+            </div>
+          </div>
+          <div class="skill-item">
+            <span class="skill-label">Regate:</span>
+            <span class="skill-value">{{ jugador.dribbling }}</span>
+            <div class="skill-bar">
+              <div class="skill-fill" [style.width.%]="jugador.dribbling"></div>
+            </div>
+          </div>
+          <div class="skill-item">
+            <span class="skill-label">Defensa:</span>
+            <span class="skill-value">{{ jugador.defending }}</span>
+            <div class="skill-bar">
+              <div class="skill-fill" [style.width.%]="jugador.defending"></div>
+            </div>
+          </div>
+          <div class="skill-item">
+            <span class="skill-label">Físico:</span>
+            <span class="skill-value">{{ jugador.physic }}</span>
+            <div class="skill-bar">
+              <div class="skill-fill" [style.width.%]="jugador.physic"></div>
+            </div>
+          </div>
+      </div>
+
+      <!-- Gráfico de Barras - Estadísticas Detalladas -->
+      <div class="chart-card">
+  <h2>📊 Estadísticas Detalladas</h2>
+  <div class="chart-wrapper">
+    <canvas #barCanvas></canvas>
+  </div>
+</div>
+    </div>
+
+    <!-- Estadísticas Detalladas en Texto -->
+    <div class="detailed-stats">
+      <h2>📋 Estadísticas Completas</h2>
+      
+      <div class="stats-section">
+        <h3>⚔️ Ataque</h3>
+        <div class="stats-list">
+          <div class="stat-row">
+            <span>Centros:</span>
+            <span class="stat-val">{{ jugador.attacking_crossing || 0 }}</span>
+          </div>
+          <div class="stat-row">
+            <span>Finalización:</span>
+            <span class="stat-val">{{ jugador.attacking_finishing || 0 }}</span>
+          </div>
+          <div class="stat-row">
+            <span>Precisión Cabezazos:</span>
+            <span class="stat-val">{{ jugador.attacking_heading_accuracy || 0 }}</span>
+          </div>
+          <div class="stat-row">
+            <span>Pase Corto:</span>
+            <span class="stat-val">{{ jugador.attacking_short_passing || 0 }}</span>
+          </div>
+          <div class="stat-row">
+            <span>Voleas:</span>
+            <span class="stat-val">{{ jugador.attacking_volleys || 0 }}</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="stats-section">
+        <h3>🎨 Habilidad</h3>
+        <div class="stats-list">
+          <div class="stat-row">
+            <span>Regate:</span>
+            <span class="stat-val">{{ jugador.skill_dribbling || 0 }}</span>
+          </div>
+          <div class="stat-row">
+            <span>Efecto:</span>
+            <span class="stat-val">{{ jugador.skill_curve || 0 }}</span>
+          </div>
+          <div class="stat-row">
+            <span>Precisión Tiros Libres:</span>
+            <span class="stat-val">{{ jugador.skill_fk_accuracy || 0 }}</span>
+          </div>
+          <div class="stat-row">
+            <span>Pase Largo:</span>
+            <span class="stat-val">{{ jugador.skill_long_passing || 0 }}</span>
+          </div>
+          <div class="stat-row">
+            <span>Control Balón:</span>
+            <span class="stat-val">{{ jugador.skill_ball_control || 0 }}</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="stats-section">
+        <h3>🏃 Movimiento</h3>
+        <div class="stats-list">
+          <div class="stat-row">
+            <span>Aceleración:</span>
+            <span class="stat-val">{{ jugador.movement_acceleration || 0 }}</span>
+          </div>
+          <div class="stat-row">
+            <span>Velocidad Sprint:</span>
+            <span class="stat-val">{{ jugador.movement_sprint_speed || 0 }}</span>
+          </div>
+          <div class="stat-row">
+            <span>Agilidad:</span>
+            <span class="stat-val">{{ jugador.movement_agility || 0 }}</span>
+          </div>
+          <div class="stat-row">
+            <span>Reacciones:</span>
+            <span class="stat-val">{{ jugador.movement_reactions || 0 }}</span>
+          </div>
+          <div class="stat-row">
+            <span>Balance:</span>
+            <span class="stat-val">{{ jugador.movement_balance || 0 }}</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="stats-section">
+        <h3>💪 Potencia</h3>
+        <div class="stats-list">
+          <div class="stat-row">
+            <span>Potencia Tiro:</span>
+            <span class="stat-val">{{ jugador.power_shot_power || 0 }}</span>
+          </div>
+          <div class="stat-row">
+            <span>Salto:</span>
+            <span class="stat-val">{{ jugador.power_jumping || 0 }}</span>
+          </div>
+          <div class="stat-row">
+            <span>Resistencia:</span>
+            <span class="stat-val">{{ jugador.power_stamina || 0 }}</span>
+          </div>
+          <div class="stat-row">
+            <span>Fuerza:</span>
+            <span class="stat-val">{{ jugador.power_strength || 0 }}</span>
+          </div>
+          <div class="stat-row">
+            <span>Tiros Lejanos:</span>
+            <span class="stat-val">{{ jugador.power_long_shots || 0 }}</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="stats-section">
+        <h3>🧠 Mentalidad</h3>
+        <div class="stats-list">
+          <div class="stat-row">
+            <span>Agresividad:</span>
+            <span class="stat-val">{{ jugador.mentality_aggression || 0 }}</span>
+          </div>
+          <div class="stat-row">
+            <span>Interceptaciones:</span>
+            <span class="stat-val">{{ jugador.mentality_interceptions || 0 }}</span>
+          </div>
+          <div class="stat-row">
+            <span>Posicionamiento:</span>
+            <span class="stat-val">{{ jugador.mentality_positioning || 0 }}</span>
+          </div>
+          <div class="stat-row">
+            <span>Visión:</span>
+            <span class="stat-val">{{ jugador.mentality_vision || 0 }}</span>
+          </div>
+          <div class="stat-row">
+            <span>Penales:</span>
+            <span class="stat-val">{{ jugador.mentality_penalties || 0 }}</span>
+          </div>
+          <div class="stat-row">
+            <span>Compostura:</span>
+            <span class="stat-val">{{ jugador.mentality_composure || 0 }}</span>
+          </div>

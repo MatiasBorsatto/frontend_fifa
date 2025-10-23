@@ -1,0 +1,20 @@
+<!-- Navbar (solo cuando está autenticado) -->
+<nav class="navbar" *ngIf="showNavbar && authService.isAuthenticated()">
+  <div class="navbar-container">
+    <div class="navbar-brand">
+      <span class="title">FIFA Players</span>
+    </div>
+    
+    <div class="navbar-menu">
+      
+      <button class="btn-logout" (click)="logout()">
+        🚪 Cerrar Sesión
+      </button>
+    </div>
+  </div>
+</nav>
+
+<!-- Main Content -->
+<main [class.with-navbar]="showNavbar && authService.isAuthenticated()">
+  <router-outlet></router-outlet>
+</main>

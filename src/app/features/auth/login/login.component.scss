@@ -1,0 +1,130 @@
+.login-container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 20px;
+}
+
+.login-card {
+  background: white;
+  border-radius: 20px;
+  padding: 40px;
+  width: 100%;
+  max-width: 450px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+
+  .logo {
+    text-align: center;
+    margin-bottom: 30px;
+
+    h1 {
+      font-size: 32px;
+      font-weight: bold;
+      color: #667eea;
+      margin: 0 0 5px 0;
+    }
+
+    p {
+      color: #666;
+      margin: 0;
+    }
+  }
+
+  .tabs {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 30px;
+
+    button {
+      flex: 1;
+      padding: 12px;
+      border: 2px solid #e0e0e0;
+      background: white;
+      border-radius: 10px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+
+      &.active {
+        background: #667eea;
+        color: white;
+        border-color: #667eea;
+      }
+
+      &:hover:not(.active) {
+        border-color: #667eea;
+      }
+    }
+  }
+
+  .auth-form {
+    .form-group {
+      margin-bottom: 20px;
+
+      label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 600;
+        color: #333;
+      }
+
+      input {
+        width: 100%;
+        padding: 12px 16px;
+        border: 2px solid #e0e0e0;
+        border-radius: 10px;
+        font-size: 16px;
+        transition: all 0.3s;
+        box-sizing: border-box;
+
+        &:focus {
+          outline: none;
+          border-color: #667eea;
+        }
+
+        &.error {
+          border-color: #f44336;
+        }
+      }
+
+      .error-text {
+        color: #f44336;
+        font-size: 12px;
+        margin-top: 5px;
+      }
+    }
+
+    .error-message {
+      background: #ffebee;
+      color: #c62828;
+      padding: 12px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      font-size: 14px;
+    }
+
+    .btn-primary {
+      width: 100%;
+      padding: 14px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.2s;
+
+      &:hover:not(:disabled) {
+        transform: translateY(-2px);
+      }
+
+      &:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+      }
+    }
+  }
+}

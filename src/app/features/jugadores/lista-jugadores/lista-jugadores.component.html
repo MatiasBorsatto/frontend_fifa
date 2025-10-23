@@ -1,0 +1,174 @@
+<div class="lista-container">
+  <!-- Header -->
+  <div class="header">
+    <div class="header-content">
+      <h1>⚽ Jugadores FIFA</h1>
+      <div class="header-actions">
+        <button class="btn-primary" (click)="irACrear()">
+          ➕ Crear Jugador
+        </button>
+        <button class="btn-secondary" (click)="exportarCSV()" [disabled]="jugadores.length === 0">
+          📥 Exportar CSV
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Filtros -->
+  <div class="filtros-card">
+    <h3>🔍 Filtros de Búsqueda</h3>
+    <div class="filtros-grid">
+      <div class="form-group">
+        <label>Nombre del Jugador</label>
+        <input 
+          type="text" 
+          [(ngModel)]="filtroNombre" 
+          placeholder="Buscar por nombre..."
+          (keyup.enter)="aplicarFiltros()">
+      </div>
+
+      <div class="form-group">
+        <label>Club</label>
+        <input 
+          type="text" 
+          [(ngModel)]="filtroClub" 
+          placeholder="Buscar por club..."
+          (keyup.enter)="aplicarFiltros()">
+      </div>
+
+      <div class="form-group">
+        <label>Posición</label>
+        <select [(ngModel)]="filtroPosicion">
+          <option value="">Todas las posiciones</option>
+          <option *ngFor="let pos of posicionesDisponibles" [value]="pos">{{ pos }}</option>
+        </select>
+      </div>
+
+      <div class="form-actions">
+        <button class="btn-primary" (click)="aplicarFiltros()">
+          Buscar
+        </button>
+        <button class="btn-secondary" (click)="limpiarFiltros()">
+          Limpiar
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading -->
+  <div *ngIf="loading" class="loading">
+    <div class="spinner"></div>
+    <p>Cargando jugadores...</p>
+  </div>
+
+  <!-- Tabla de Jugadores -->
+  <div *ngIf="!loading" class="tabla-card">
+    <div class="tabla-header">
+      <h3>Total de Jugadores: {{ totalJugadores }}</h3>
+      <p>Mostrando página {{ paginaActual }} de {{ totalPaginas }}</p>
+    </div>
+
+    <div class="tabla-responsive" *ngIf="jugadores.length > 0">
+      <table class="jugadores-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Foto</th>
+            <th>Nombre</th>
+            <th>Edad</th>
+            <th>Posición</th>
+            <th>Club</th>
+            <th>Nacionalidad</th>
+            <th>OVR</th>
+            <th>POT</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let jugador of jugadores" (click)="verDetalle(jugador.id)" class="clickable">
+            <td>{{ jugador.id }}</td>
+            <td>
+              <img
+            [src]="'http://localhost:3000/api/proxy-image?url=' + jugador.player_face_url"
+            alt="Jugador"
+            (error)="onImageError($event)"
+            loading="lazy"
+          />
+            </td>
+            <td class="nombre-col">{{ jugador.long_name }}</td>
+            <td>{{ jugador.age }}</td>
+            <td>
+              <span class="badge badge-position">{{ jugador.player_positions }}</span>
+            </td>
+            <td>{{ jugador.club_name }}</td>
+            <td>{{ jugador.nationality_name }}</td>
+            <td>
+              <span class="badge badge-overall" [class.high]="jugador.overall >= 85">
+                {{ jugador.overall }}
+              </span>
+            </td>
+            <td>
+              <span class="badge badge-potential">{{ jugador.potential }}</span>
+            </td>
+            <td class="acciones-col" (click)="$event.stopPropagation()">
+              <button 
+                class="btn-icon btn-view" 
+                (click)="verDetalle(jugador.id)"
+                title="Ver Detalle">
+                👁️
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div *ngIf="jugadores.length === 0 && !loading" class="no-data">
+      <p>🔍 No se encontraron jugadores con los filtros aplicados</p>
+      <button class="btn-secondary" (click)="limpiarFiltros()">Limpiar Filtros</button>
+    </div>
+
+    <!-- Paginación -->
+    <div class="paginacion" *ngIf="totalPaginas > 1">
+      <button 
+        class="btn-pag" 
+        [disabled]="paginaActual === 1"
+        (click)="cambiarPagina(paginaActual - 1)">
+        ‹ Anterior
+      </button>
+
+      <button 
+        *ngIf="paginasArray[0] > 1"
+        class="btn-pag"
+        (click)="cambiarPagina(1)">
+        1
+      </button>
+
+      <span *ngIf="paginasArray[0] > 2" class="dots">...</span>
+
+      <button 
+        *ngFor="let pag of paginasArray"
+        class="btn-pag"
+        [class.active]="pag === paginaActual"
+        (click)="cambiarPagina(pag)">
+        {{ pag }}
+      </button>
+
+      <span *ngIf="paginasArray[paginasArray.length - 1] < totalPaginas - 1" class="dots">...</span>
+
+      <button 
+        *ngIf="paginasArray[paginasArray.length - 1] < totalPaginas"
+        class="btn-pag"
+        (click)="cambiarPagina(totalPaginas)">
+        {{ totalPaginas }}
+      </button>
+
+      <button 
+        class="btn-pag" 
+        [disabled]="paginaActual === totalPaginas"
+        (click)="cambiarPagina(paginaActual + 1)">
+        Siguiente ›
+      </button>
+    </div>
+  </div>
+</div>
